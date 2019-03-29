@@ -28,7 +28,12 @@ export class PostsService {
 
   addPost(post: Post) {
     const newPost: Post = post;
-    this.posts.push(newPost);
-    this.postsUpdated.next([...this.posts]);  // how Subjects emit in this case a new copy of my posts after I updated them
+    this.http
+      .post<{message: string}>('http://localhost:3000/api/posts', post)
+      .subscribe((responseData) => {
+        console.log(responseData.message);
+        this.posts.push(newPost);
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 }
