@@ -1,4 +1,5 @@
 const http = require('http');
+const debug = require("debug")("node-angular")
 const app = require('./backend/app');
 
 const normalizePort = val => {
@@ -39,7 +40,7 @@ const onError = error => {
 const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === "string" ? "pipe" + addr : "port" + port;
-  debugger("Listening on " + bind);
+  debug("Listening on " + bind);
 };
 
 const port = normalizePort(process.env.PORT || 3000);
