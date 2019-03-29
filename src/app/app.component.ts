@@ -6,9 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  posts: [] = [];
+  storedPosts = [];
 
   onPostAdded(post) {
-    this.posts.push(post);
+    this.storedPosts.push(post);
   }
 }
