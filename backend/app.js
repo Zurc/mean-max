@@ -24,10 +24,12 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers", // restrict to certain domains
     "Origin, X-Requested-With, Content-Type, Accept"  // the incoming request might have this headers
     );
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods",
+    "GET, POST, PATCH, DELETE, OPTIONS");
   next();
 });
 
+// posts POST request (create posts)
 app.post('/api/posts', (req, res, next) => {
   const post = new Post({
     title: req.body.title,
@@ -39,7 +41,8 @@ app.post('/api/posts', (req, res, next) => {
   });
 });
 
-app.use('/api/posts',(req, res, next) => {
+// posts GET request (fetch posts)
+app.get('/api/posts',(req, res, next) => {
   Post.find()
     .then(documents => {
       res.status(200).json({
@@ -47,6 +50,16 @@ app.use('/api/posts',(req, res, next) => {
         posts: documents
       });
     });
+});
+
+// post DELETE request (delete specific post, dynamically passed id)
+// :id // called dynamic segment
+app.delete('/api/posts/:id', (req, res, next) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    // send back a message to confirm deletion
+    res.status(200).json({message: 'Post deleted!'});
+  });
 });
 
 module.exports = app;
