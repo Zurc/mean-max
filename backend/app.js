@@ -66,6 +66,16 @@ app.get('/api/posts',(req, res, next) => {
     });
 });
 
+app.get('/api/posts/:id', (req, res, next) => {
+  Post.findById(req.params.id).then(post => {
+    if (post) { // if post exists
+      res.status(200).json(post);
+    } else {  // if post does NOT exists
+      res.status(404).json({message: 'Post not found'});
+    }
+  })
+})
+
 // post DELETE request (delete specific post, dynamically passed id)
 // :id // called dynamic segment
 app.delete('/api/posts/:id', (req, res, next) => {

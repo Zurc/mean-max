@@ -39,7 +39,15 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return {...this.posts.find(p => p.id === id)};
+    // get the post from our local array of posts (this way if we refresh the edit page
+    // all it's gone, because we start with an empty array)
+    // return {...this.posts.find(p => p.id === id)};
+
+    // instead we'll keep our id from the info on the server
+    // return the observable we get from our angular http client
+    // we will subscribe in the post-create component
+    return this.http.get<{_id: string, title: string, content: string}>('http://localhost:3000/api/posts/' + id);
+
   }
 
   // listen to the subject (after we add any new post with addPost method)
