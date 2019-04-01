@@ -61,10 +61,26 @@ export class PostsService {
   }
 
   updatePost(id: string, title: string, content: string) {
+    // we have all the data to update the post on the frontend
+    // in our case we got that covered on the backend (app.js) but this is to show
+    // how to update if needed on the frontend
     const post: Post = {id, title, content} ;
     this.http.put('http://localhost:3000/api/posts/' + post.id, post)
+    // how to locally update the posts once I've got my success response from the server
+    // replace the current version of the post in our posts array with that version
       .subscribe(response => {
-        console.log(response);
+        // clone our post array and store it on this updatedPosts constant
+        const updatedPosts = [...this.posts];
+        // search old version by its id
+        // findIndex takes a function that will return if we find the post we are looking for
+        // check if the id of the post we are looking in that array is equal to the id of the post we updated
+        const odlPostIndex = updatedPosts.findIndex(p => p.id === post.id);
+        // if it's equal, then I found the id of the post I want to replace with my new post
+        updatedPosts[odlPostIndex] = post;
+        // this is the immutable way for updating the old posts
+        this.posts = updatedPosts;
+        // now tell the app about it (sending this event from our Subject)
+        this.postsUpdated.next([...this.posts]);
       });
   }
 
