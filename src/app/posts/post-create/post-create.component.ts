@@ -12,9 +12,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 export class PostCreateComponent implements OnInit {
   enteredTitle = '';
   enteredContent = '';
+  post: Post;
+  isLoading = false;
   private mode = 'create';
   private postId: string;
-  post: Post;
 
   constructor(
     private postsService: PostsService,
@@ -27,7 +28,11 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
+        // show spinner when we start fetching...
+        this.isLoading = true;
         this.postsService.getPost(this.postId).subscribe(postData => {
+          // hide spinner once we got our result
+          this.isLoading = false;
           this.post = {id: postData._id, title: postData.title, content: postData.content};
         });
       } else {
@@ -41,6 +46,9 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    // show spinner after created...
+    // no need to reset to false because we're going out of the page
+    this.isLoading = true;
     // const post: Post = { id: null, title: form.value.title, content: form.value.content };
     if (this.mode === 'create') {
       this.postsService.addPost(form.value.title, form.value.content);
