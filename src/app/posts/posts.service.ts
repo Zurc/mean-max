@@ -38,21 +38,33 @@ export class PostsService {
       });
   }
 
+  getPost(id: string) {
+    return {...this.posts.find(p => p.id === id)};
+  }
+
   // listen to the subject (after we add any new post with addPost method)
   getPostUpdateListener() {
     return this.postsUpdated.asObservable();
   }
 
-  addPost(post: Post) {
-    const newPost: Post = post;
+  addPost(title: string, content: string) {
+    const post: Post = {id: null, title  , content};
     this.http
       .post<{message: string, postId: string}>('http://localhost:3000/api/posts', post)
       .subscribe((responseData) => {
         const id = responseData.postId;
         // id updated. remember post is an object (reference value)
         post.id = id;
-        this.posts.push(newPost);
+        this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+      });
+  }
+
+  updatePost(id: string, title: string, content: string) {
+    const post: Post = {id, title, content} ;
+    this.http.put('http://localhost:3000/api/posts/' + post.id, post)
+      .subscribe(response => {
+        console.log(response);
       });
   }
 
