@@ -57,7 +57,11 @@ export class PostsService {
   deletePost(postId: string) {
    this.http.delete('http://localhost:3000/api/posts/' + postId)
      .subscribe(() => {
-       console.log('Deleted!');
+       // filter returns a subset (pass a function, if return true that elem will be kept into the array)
+       // condition: keep all entries where the id is not equal to the one we want to delete (delete the one that is equal)
+       const updatedPosts = this.posts.filter(post => post.id !== postId);
+       this.posts = updatedPosts;
+       this.postsUpdated.next([...this.posts]);
      });
   }
 }
