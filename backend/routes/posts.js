@@ -33,14 +33,20 @@ const storage = multer.diskStorage({
 // posts POST request (create posts)
 // pass multer as another param (middleware)
 router.post('', multer({storage}).single("image"), (req, res, next) => {
+  const url = req.protocol + '://' + req.get("host");
   const post = new Post({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: url + "/images/" + req.file.filename
   })
   post.save().then(createdPost => {
     res.status(201).json({
       message: 'Post added successfully',
-      postId: createdPost._id
+      post: {
+        // create the post with all the previous props + imagePath
+        ...createdPost,
+        imagePath: createdPost.imagePath
+      } 
     });
   });
 });
@@ -59,8 +65,7 @@ router.put('/:id', (req, res, next) => {
 
 // posts GET request (fetch posts)
 router.get('',(req, res, next) => {
-  Post.find()
-    .then(documents => {
+  Post.find().then(documents => {
       res.status(200).json({
         message: 'Posts fetched succesfully',
         posts: documents

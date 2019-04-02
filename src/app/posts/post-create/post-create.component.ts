@@ -52,7 +52,8 @@ export class PostCreateComponent implements OnInit {
           this.post = {
             id: postData._id,
             title: postData.title,
-            content: postData.content
+						content: postData.content,
+						imagePath: null
           };
           // setValue: override your initial values if you have values on a post
           this.form.setValue({
