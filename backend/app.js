@@ -1,3 +1,5 @@
+// this allows us to construct paths to safely run on any OS
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -16,6 +18,8 @@ mongoose.connect('mongodb+srv://cruz:XTcvkR8hRGu2f5UJ@cluster0-595il.mongodb.net
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
+// any req targeting /images will be forwarded to 'backend/images' and allowed to continue 
+app.use("/images", express.static(path.join("backend/images")));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', "*"); // any domain allowed to access our resources

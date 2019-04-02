@@ -45,7 +45,7 @@ router.post('', multer({storage}).single("image"), (req, res, next) => {
       post: {
         // create the post with all the previous props + imagePath
         ...createdPost,
-        imagePath: createdPost.imagePath
+        id: createdPost._id
       } 
     });
   });
