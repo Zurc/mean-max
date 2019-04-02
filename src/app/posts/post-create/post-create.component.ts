@@ -16,6 +16,7 @@ export class PostCreateComponent implements OnInit {
   isLoading = false;
   // create a form programatically
   form: FormGroup;
+  imagePreview: string;
   private mode = 'create';
   private postId: string;
 
@@ -74,8 +75,14 @@ export class PostCreateComponent implements OnInit {
     this.form.patchValue({ image: file });
     // inform angular the value has changed
     this.form.get('image').updateValueAndValidity();
-    console.log(file);
-    console.log(this.form);
+    // convert my image to a data URL (readable by the img HTML tag)
+    // to create the URL we'll use a feature provided by JS called the file reader
+    const reader = new FileReader();
+    // what we do once it's done loading (async) the file
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   onSavePost() {
