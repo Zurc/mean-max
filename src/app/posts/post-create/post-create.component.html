@@ -15,6 +15,10 @@
         placeholder="Post Title">
       <mat-error *ngIf="title.invalid" >Title field is required</mat-error>
     </mat-form-field>
+    <div>
+      <button type="button" mat-stroked-button (click)="filePicker.click()">Pick Image</button>
+      <input type="file" #filePicker>
+    </div>
     <mat-form-field>
       <textarea
         matInput
