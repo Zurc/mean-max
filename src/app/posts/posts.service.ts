@@ -56,11 +56,19 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  addPost(title: string, content: string) {
-    const post: Post = {id: null, title  , content};
-    this.http
-      .post<{message: string, postId: string}>('http://localhost:3000/api/posts', post)
+  addPost(title: string, content: string, image: File) {
+		// const post: Post = {id: null, title  , content};
+		// FormData JS object is a data format that allow us to combine text values and blob (file values)
+		const postData = new FormData();
+		// usit appending files to it
+		postData.append("title", title);
+		postData.append("content", content);
+		postData.append("image", image, title)
+		this.http
+		// angular http client adapts and send the right headers the data we send
+      .post<{message: string, postId: string}>('http://localhost:3000/api/posts', postData)
       .subscribe((responseData) => {
+				const post:Post = {id: responseData.postId, title, content};
         const id = responseData.postId;
         // id updated. remember post is an object (reference value)
         post.id = id;
