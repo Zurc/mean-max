@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-post-create',
@@ -33,7 +34,10 @@ export class PostCreateComponent implements OnInit {
       'content': new FormControl(null, {validators: [Validators.required]}),
       // I don't synchronize this with the HTML (I'll manage all from typescript)
       // I don't want to display anything on start
-      'image': new FormControl(null, {validators: [Validators.required]})
+      'image': new FormControl(null, {
+        validators: [Validators.required],
+        asyncValidators: [mimeType]
+      })
     })
     // check if we have postId or not
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
