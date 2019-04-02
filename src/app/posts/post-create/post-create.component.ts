@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from '../post.model';
-import { NgForm } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
@@ -14,6 +14,8 @@ export class PostCreateComponent implements OnInit {
   enteredContent = '';
   post: Post;
   isLoading = false;
+  // create a form programatically
+  form: FormGroup;
   private mode = 'create';
   private postId: string;
 
@@ -23,6 +25,12 @@ export class PostCreateComponent implements OnInit {
     private route: ActivatedRoute) {}
 
   ngOnInit() {
+    // initialize the form
+    this.form = new FormGroup({
+      // create a form control
+      'title': new FormControl(null, {validators: [Validators.required, Validators.minLength(3)]}),
+      'content': new FormControl(null, {validators: [Validators.required]})
+    })
     // check if we have postId or not
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
@@ -33,7 +41,16 @@ export class PostCreateComponent implements OnInit {
         this.postsService.getPost(this.postId).subscribe(postData => {
           // hide spinner once we got our result
           this.isLoading = false;
-          this.post = {id: postData._id, title: postData.title, content: postData.content};
+          this.post = {
+            id: postData._id,
+            title: postData.title,
+            content: postData.content
+          };
+          // setValue: override your initial values if you have values on a post
+          this.form.setValue({
+            'title': this.post.title,
+            'content': this.post.content
+          })
         });
       } else {
         this.mode = 'create';
@@ -42,8 +59,8 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
-  onSavePost(form: NgForm) {
-    if (form.invalid) {
+  onSavePost() {
+    if (this.form.invalid) {
       return;
     }
     // show spinner after created...
@@ -51,13 +68,13 @@ export class PostCreateComponent implements OnInit {
     this.isLoading = true;
     // const post: Post = { id: null, title: form.value.title, content: form.value.content };
     if (this.mode === 'create') {
-      this.postsService.addPost(form.value.title, form.value.content);
+      this.postsService.addPost(this.form.value.title, this.form.value.content);
     } else {
       this.postsService.updatePost(
         this.postId,
-        form.value.title,
-        form.value.content);
+        this.form.value.title,
+        this.form.value.content);
     }
-    form.resetForm();
+    this.form.reset();
   }
 }
