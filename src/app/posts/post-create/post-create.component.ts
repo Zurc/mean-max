@@ -29,7 +29,10 @@ export class PostCreateComponent implements OnInit {
     this.form = new FormGroup({
       // create a form control
       'title': new FormControl(null, {validators: [Validators.required, Validators.minLength(3)]}),
-      'content': new FormControl(null, {validators: [Validators.required]})
+      'content': new FormControl(null, {validators: [Validators.required]}),
+      // I don't synchronize this with the HTML (I'll manage all from typescript)
+      // I don't want to display anything on start
+      'image': new FormControl(null, {validators: [Validators.required]})
     })
     // check if we have postId or not
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -57,6 +60,22 @@ export class PostCreateComponent implements OnInit {
         this.postId = null;
       }
     });
+  }
+
+  // passing the event object of that element we have access to all its properties
+  onImagePicked(event: Event) {
+    // type convertion: tell Typescript event.target is an input
+    // which has files property
+    // (files is an array of files (object) but we are only selecting one, the first one)
+    const file = (event.target as HTMLInputElement).files[0];
+    // we want to store this in a form control here
+    // patchValue allows you to target a single control
+    // we pass an objectwith: the name of the control and the value (file object)
+    this.form.patchValue({ image: file });
+    // inform angular the value has changed
+    this.form.get('image').updateValueAndValidity();
+    console.log(file);
+    console.log(this.form);
   }
 
   onSavePost() {
