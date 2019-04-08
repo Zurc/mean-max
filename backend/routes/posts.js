@@ -46,7 +46,7 @@ router.post('', multer({storage}).single("image"), (req, res, next) => {
         // create the post with all the previous props + imagePath
         ...createdPost,
         id: createdPost._id
-      } 
+      }
     });
   });
 });
@@ -73,7 +73,16 @@ router.put('/:id', multer({storage}).single("image"),
 
 // posts GET request (fetch posts)
 router.get('',(req, res, next) => {
-  Post.find().then(documents => {
+  // convert this params to numbers (add + sign)
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+  postQuery.then(documents => {
       res.status(200).json({
         message: 'Posts fetched succesfully',
         posts: documents
