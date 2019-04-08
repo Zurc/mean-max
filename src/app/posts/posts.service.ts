@@ -13,8 +13,9 @@ export class PostsService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPosts() {
-    this.http.get<{message: string, posts: any }>('http://localhost:3000/api/posts')
+  getPosts(postsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
+    this.http.get<{message: string, posts: any }>('http://localhost:3000/api/posts' + queryParams)
       .pipe(map((postData) => {
         return postData.posts.map(post => {
           return {
@@ -53,8 +54,8 @@ export class PostsService {
 			)
       .subscribe((responseData) => {
 				const post:Post = {
-					id: responseData.post.id, 
-					title: title, 
+					id: responseData.post.id,
+					title: title,
 					content: content,
 					imagePath: responseData.post.imagePath
 				};
@@ -75,9 +76,9 @@ export class PostsService {
 			postData.append("image", image, title)
 		} else { // else I send JSON data
 			postData = {
-				id: id, 
-				title: title, 
-				content: content, 
+				id: id,
+				title: title,
+				content: content,
 				imagePath: image
 			};
 		}
@@ -86,9 +87,9 @@ export class PostsService {
         const updatedPosts = [...this.posts];
 				const odlPostIndex = updatedPosts.findIndex(p => p.id === id);
 				const post: Post = {
-					id, 
-					title, 
-					content, 
+					id,
+					title,
+					content,
 					imagePath: ""
 				};
         updatedPosts[odlPostIndex] = post;
