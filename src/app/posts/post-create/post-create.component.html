@@ -13,7 +13,6 @@
       <mat-error *ngIf="form.get('title').invalid" >Title field is required</mat-error>
     </mat-form-field>
     <div>
-      <!-- proxy that click to the input with the 'filePicker' local reference -->
       <button type="button" mat-stroked-button (click)="filePicker.click()">Pick Image</button>
       <input type="file" #filePicker (change)="onImagePicked($event)">
     </div>

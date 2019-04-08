@@ -1,14 +1,13 @@
-import { Post } from './post.model';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-// this is another way of provide a service on the whole app, instead of in the app.module
+import { Post } from './post.model';
+
 @Injectable({providedIn: 'root'})
 export class PostsService {
-  // add private so you cannot edit from the outside of this service
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
@@ -32,31 +31,32 @@ export class PostsService {
       });
   }
 
+	getPostUpdateListener() {
+		return this.postsUpdated.asObservable();
+	}
+
   getPost(id: string) {
 		return this.http
-		.get<{_id: string, title: string, content: string}>('http://localhost:3000/api/posts/' + id);
+		.get<{_id: string, title: string, content: string, imagePath: string}>('http://localhost:3000/api/posts/' + id);
 
-  }
-
-  getPostUpdateListener() {
-    return this.postsUpdated.asObservable();
   }
 
   addPost(title: string, content: string, image: File) {
 		const postData = new FormData();
-		// usit appending files to it
 		postData.append("title", title);
 		postData.append("content", content);
 		postData.append("image", image, title)
 		this.http
-		// angular http client adapts and send the right headers the data we send
-      .post<{message: string, post: Post}>('http://localhost:3000/api/posts', postData)
+      .post<{message: string, post: Post}>(
+				'http://localhost:3000/api/posts',
+				postData
+			)
       .subscribe((responseData) => {
 				const post:Post = {
 					id: responseData.post.id, 
-					title, 
-					content,
-					imagePath: responseData.imagePath
+					title: title, 
+					content: content,
+					imagePath: responseData.post.imagePath
 				};
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
@@ -64,12 +64,33 @@ export class PostsService {
       });
   }
 
-  updatePost(id: string, title: string, content: string) {
-    const post: Post = {id, title, content, imagePath: null } ;
-    this.http.put('http://localhost:3000/api/posts/' + post.id, post)
+  updatePost(id: string, title: string, content: string, image: File | string) {
+		let postData: Post | FormData;
+		console.log(image);
+		if (typeof(image) === 'object') { // if its obj create a formData
+			postData = new FormData();
+			postData.append("id", id),
+			postData.append("title", title),
+			postData.append("content", content),
+			postData.append("image", image, title)
+		} else { // else I send JSON data
+			postData = {
+				id: id, 
+				title: title, 
+				content: content, 
+				imagePath: image
+			};
+		}
+    this.http.put('http://localhost:3000/api/posts/' + id, postData)
       .subscribe(response => {
         const updatedPosts = [...this.posts];
-        const odlPostIndex = updatedPosts.findIndex(p => p.id === post.id);
+				const odlPostIndex = updatedPosts.findIndex(p => p.id === id);
+				const post: Post = {
+					id, 
+					title, 
+					content, 
+					imagePath: ""
+				};
         updatedPosts[odlPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
