@@ -14,6 +14,7 @@ export class SignupComponent implements OnInit {
   }
 
   onSignup(form: NgForm) {
+    // send a request to the backend to create a new user (use Auth Service)
     console.log(form.value);
   }
 }
