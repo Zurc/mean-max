@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+  private isAuthenticated = false;
   private token: string;
   // we'll use a subject to push auth status to components interested
   private authStatusListener = new Subject<boolean>();
@@ -15,6 +16,10 @@ export class AuthService {
 
   getToken() {
     return this.token;
+  }
+
+  getIsAuth() {
+    return this.isAuthenticated;
   }
 
   getAuthStatusListener() {
@@ -35,8 +40,19 @@ export class AuthService {
     this.http.post<{token: string}>('http://localhost:3000/api/user/login', authData)
       .subscribe(response => {
         this.token = response.token;
-        // emit true when the user is authenticated
-        this.authStatusListener.next(true);
+        if (this.token) {
+          // emit true when the user is authenticated
+          this.isAuthenticated = true;
+          this.authStatusListener.next(true);
+        }
       });
+  }
+
+  onLogout() {
+    // clear the token
+    this.token = null;
+    // send the status to the rest of the app
+    this.isAuthenticated = false;
+    this.authStatusListener.next(false);
   }
 }
