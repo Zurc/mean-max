@@ -60,7 +60,8 @@ router.post("/login", (req, res, next) => {
       );
       // send the response
       res.status(200).json({
-        token: token
+        token: token,
+        expiresIn: 3600
       })
     })
     // catch any error and send response with message and status
