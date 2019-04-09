@@ -11,7 +11,7 @@ export class AuthService {
 
   createUser(email: string, password: string) {
     const authData: AuthData = {email, password};
-    this.http.post("http://localhost:3000/api/user/signup", authData)
+    this.http.post('http://localhost:3000/api/user/signup', authData)
       .subscribe(response => {
         console.log(response);
       });
