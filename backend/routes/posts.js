@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const Post = require('../models/post');
+const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -32,7 +33,10 @@ const storage = multer.diskStorage({
 
 // posts POST request (create posts)
 // pass multer as another param (middleware)
-router.post('', multer({storage}).single("image"), (req, res, next) => {
+router.post(
+  '',
+  checkAuth, // check if its authenticated
+  multer({storage}).single("image"), (req, res, next) => {
   const url = req.protocol + '://' + req.get("host");
   const post = new Post({
     title: req.body.title,
@@ -51,7 +55,10 @@ router.post('', multer({storage}).single("image"), (req, res, next) => {
   });
 });
 
-router.put('/:id', multer({storage}).single("image"),
+router.put(
+  '/:id',
+  checkAuth, // check if its authenticated
+  multer({storage}).single("image"),
 (req, res, next) => {
 	let imagePath = req.body.imagePath;
 	if (req.file) {
@@ -107,7 +114,10 @@ router.get('/:id', (req, res, next) => {
 
 // post DELETE request (delete specific post, dynamically passed id)
 // :id // called dynamic segment
-router.delete('/:id', (req, res, next) => {
+router.delete(
+  '/:id',
+  checkAuth, // check if its authenticated
+  (req, res, next) => {
   Post.deleteOne({_id: req.params.id}).then(result => {
     console.log(result);
     // send back a message to confirm deletion
