@@ -1,6 +1,6 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (s ubmit)="onLogin()" *ngIf="!isLoading">
+  <form (submit)="onLogin()" *ngIf="!isLoading">
     <mat-form-field>
       <input matInput type="email" placeholder="E-mail">
       <mat-error *ngIf="" >Please enter a valid email.</mat-error>
