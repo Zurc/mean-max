@@ -19,6 +19,7 @@ export class SignupComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     // send a request to the backend to create a new user (use Auth Service)
     this.authService.createUser(form.value.email, form.value.password);
   }
