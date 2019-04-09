@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', "*"); // any domain allowed to access our resources
   res.setHeader(
     "Access-Control-Allow-Headers", // restrict to certain domains
-    "Origin, X-Requested-With, Content-Type, Accept"  // the incoming request might have this headers
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"  // the incoming request might have this headers
     );
     res.setHeader("Access-Control-Allow-Methods",
     "GET, POST, PATCH, PUT, DELETE, OPTIONS");
