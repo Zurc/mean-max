@@ -6,10 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
+  isLoading = false;
 
   constructor() { }
 
   ngOnInit() {
   }
 
+  onSignup(form: NgForm) {
+    console.log(form.value);
+  }
 }
