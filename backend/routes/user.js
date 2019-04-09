@@ -31,6 +31,7 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
+  let fetchedUser;
   // find the saved user that matches this user email from the request
   User.findOne({ email: req.body.email })
     .then(user => {
@@ -40,29 +41,35 @@ router.post("/login", (req, res, next) => {
           message: "Auth failed"
         });
       }
+      fetchedUser = user
       // compare that both hashes are the same
-      bcrypt.compare(req.body.password, user.password)
-        .then(result => {
-          // if they don't return failed message and status
-          if (!result) {
-            return res.status(401).json({
-              message: "Auth failed"
-            })
-          }
-          // if it's a valid user create a token
-          const token = jwt.sign(
-            { email: user.email, userId: user._id },
-            'secret_this_should_be_longer',
-            {expiresIn: '1h'}
-            );
-        })
-        // catch any error and send response with message and status
-        .catch(err => {
-          return res.status(401).json({
-            message: "Auth failed"
-          })
-        })
+      return bcrypt.compare(req.body.password, user.password)
     })
+    .then(result => {
+      // if they don't return failed message and status
+      if (!result) {
+        return res.status(401).json({
+          message: "Auth failed"
+        });
+      }
+      // if it's a valid user create and configure a token
+      const token = jwt.sign(
+        { email: fetchedUser.email, userId: fetchedUser._id },
+        'secret_this_should_be_longer',
+        {expiresIn: '1h'}
+      );
+      // send the response
+      res.status(200).json({
+        token: token
+      })
+    })
+    // catch any error and send response with message and status
+    .catch(err => {
+      return res.status(401).json({
+        message: "Auth failed"
+      })
+    })
+
 })
 
 // export router
